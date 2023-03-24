@@ -7,7 +7,7 @@ import csv
 class Expense_Sheet:
     def __init__(self):
         self.expense_num = 0
-
+        self.expenses = []
     def add(self,value,type,date):
         self.expense_num += 1
         self.expenses.append({'expense_num': self.expense_num, 'type': type, 'expense': value, 'date': date})
@@ -53,6 +53,8 @@ class Expense_Sheet:
         with open(f'{csv_name}', 'r') as csv_file:
             csv_reader = csv.DictReader(csv_file)
             self.expenses = [i for i in csv_reader]
+            self.view()
+            print(f'{csv_name} imported')
             self.expense_num = max(self.expenses, key=lambda x:x['expense_num'])
             self.expense_num = int(self.expense_num.get('expense_num'))
 
@@ -72,6 +74,7 @@ class Expense_Sheet:
             csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
             csv_writer.writeheader()
             [csv_writer.writerow(i) for i in self.expenses]
+            print(f'{csv_name} exported')
 
 class Expense:
     def __init__(self):
