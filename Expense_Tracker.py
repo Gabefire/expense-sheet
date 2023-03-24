@@ -7,9 +7,6 @@ import csv
 class Expense_Sheet:
     def __init__(self):
         self.expense_num = 0
-        self.expenses = []
-        self.file = open('list.txt', 'w')
-        self.file.write(f'{"-"*30}\n')
 
     def add(self,value,type,date):
         self.expense_num += 1
@@ -34,18 +31,47 @@ class Expense_Sheet:
     def view(self):
         print('-' * 30)
         print(f"num | type | cost | date")
-        if self.expense_num == 0:
+        if len(self.expenses) == 0:
             print('No expenses on list!')
         else:
             for x in self.expenses:
                 print(f'{x.get("expense_num")}.  {x.get("type")} ${x.get("expense")} {x.get("date")}')
         print('-'*30)
+    
+    #import CSV file to self.expense
+    def importcsv(self):
+        while True: #making sure the file can be opened
+            try:
+                csv_name = input('What is the name of your CSV file? ')
+                csv_text = csv_name.split('.') #allows input to end in .csv or not
+                csv_name = f'{csv_text[0]}.csv'
+                break
+            except FileNotFoundError:
+                print(f'{csv_name} not found')
+                continue
+            
+        with open(f'{csv_name}', 'r') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            self.expenses = [i for i in csv_reader]
+            self.expense_num = max(self.expenses, key=lambda x:x['expense_num'])
+            self.expense_num = int(self.expense_num.get('expense_num'))
 
-    def close_file(self):
-        for x in self.expenses:
-                self.file.write(f'{x.get("expense_num")}. {x.get("expense")} -- {"expense complete: True" if x.get("complete") else "expense complete: False"}\n')
-        self.file.write('-'*30)
-        self.file.close()
+    #export CSV file
+    def exportcsv(self):
+        while True:
+            try:
+                csv_name = input('What would you like to name your CSV file? ')
+                csv_text = csv_name.split('.') #allows input to end in .csv or not
+                csv_name = f'{csv_text[0]}.csv'
+                break
+            except ValueError:
+                print(f'{csv_name} unable to name that')
+                continue
+        with open(f'{csv_name}', 'w') as csv_file:
+            fieldnames = ['expense_num', 'type', 'expense', 'date']
+            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            csv_writer.writeheader()
+            [csv_writer.writerow(i) for i in self.expenses]
 
 class Expense:
     def __init__(self):
@@ -107,7 +133,7 @@ class ExpenseRun:
     def start(self):
         self.func = ''
         while True:
-            self.func = input('What would you like to do?(add, delete or view) Enter done when complete: ')
+            self.func = input('What would you like to do?(add, delete, import, export or view) Enter done when complete: ')
             if self.func.lower() == 'add':
                 individual_expense.create_expense()
             elif self.func.lower() == 'delete':
@@ -119,8 +145,13 @@ class ExpenseRun:
                 sheet.view()
                 print()
             elif self.func.lower() == 'done':
-                sheet.close_file()
                 break
+            elif self.func.lower() == 'import':
+                sheet.importcsv()
+                print()
+            elif self.func.lower() == 'export':
+                sheet.exportcsv()
+                print()
             else:
                 print('Sorry that is not a choice')
 individual_expense = Expense()
