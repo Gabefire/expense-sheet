@@ -1,7 +1,6 @@
 
 import datetime as dt
 from decimal import *
-import csv
 
 class Expense_Sheet:
     def __init__(self):
@@ -38,46 +37,15 @@ class Expense_Sheet:
         else:
             # go through expense list return a enumerate value to get expense number shown
             for expense_num, expense_dict in enumerate(self.expenses):
-                print(f'{expense_num+1}.  {(expense_dict.get("date")).strftime("%m/%d/%Y")} {expense_dict.get("type")} ${expense_dict.get("expense")}')
+                print(f'{expense_num+1}.  {(expense_dict.get("date"))} {expense_dict.get("type")} ${expense_dict.get("expense")}')
         print('-'*30)
     
     #import CSV file to self.expense
-    def importcsv(self):
-        while True: #making sure the file can be opened
-            try:
-                csv_name = input('What is the name of your CSV file? ')
-                csv_text = csv_name.split('.') #allows input to end in .csv or not
-                csv_name = f'{csv_text[0]}.csv'
-                break
-            except FileNotFoundError:
-                print(f'{csv_name} not found')
-                continue
-            
-        with open(f'{csv_name}', 'r') as csv_file:
-            csv_reader = csv.DictReader(csv_file)
-            self.expenses = [i for i in csv_reader]
-            self.view()
-            print(f'{csv_name} imported')
-            self.expense_num = max(self.expenses, key=lambda x:x['expense_num'])
-            self.expense_num = int(self.expense_num.get('expense_num'))
+    def importfile(self, expenses):
+        self.expenses = expenses
 
-    #export CSV file
-    def exportcsv(self):
-        while True:
-            try:
-                csv_name = input('What would you like to name your CSV file? ')
-                csv_text = csv_name.split('.') #allows input to end in .csv or not
-                csv_name = f'{csv_text[0]}.csv'
-                break
-            except ValueError:
-                print(f'{csv_name} unable to name that')
-                continue
-        with open(f'{csv_name}', 'w') as csv_file:
-            fieldnames = ['expense_num', 'type', 'expense', 'date']
-            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-            csv_writer.writeheader()
-            [csv_writer.writerow(i) for i in self.expenses]
-            print(f'{csv_name} exported')
+    def exportfile(self):
+        return self.expenses
 
 class Expense:
     def __init__(self):
