@@ -2,6 +2,7 @@ import Expense_Tracker as ET
 import Import_Methods as IM
 individual_expense = ET.Expense()
 sheet = ET.Expense_Sheet()
+edited = ET.EditedExpense()
 
 types = (
     'CSV' ,'Excel-NOT WORKING' , 'Google-NOT WORKING'
@@ -9,7 +10,7 @@ types = (
 
 
 while True:
-    func = input('What would you like to do?(add, delete, import, export or view) Enter done when complete: ')
+    func = input('What would you like to do?(add, delete, import, export, edit or view) Enter done when complete: ')
     if func.lower() == 'add':
         date, type, value = individual_expense.create_expense()
         sheet.add(date, type, value)
@@ -55,6 +56,12 @@ while True:
             CSVfile = IM.CSV()
             expenses = sheet.exportfile()
             CSVfile.exportfile(expenses, file_name)
+        print()
+    elif func.lower() == 'edit':
+        x, y = sheet.select_expense()
+        value = edited.edit_expense(y)
+        x[y] = value
+        sheet.add(x['date'], x['type'], x['expense'])
         print()
     else:
         print('Sorry that is not a choice')

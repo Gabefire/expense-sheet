@@ -26,6 +26,7 @@ class CSV(FileType):
                     return expenses
             except FileNotFoundError:
                 print(f'{file_name} can not be opened!')
+                quit()
 
     #export CSV file
     def exportfile(self, expenses, file_name):
